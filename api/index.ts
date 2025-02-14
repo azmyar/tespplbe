@@ -36,7 +36,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors(corsOptions));
 
 app.get('/', (req, res) => {
-  res.send('PPL C-5');
+  res.send('PPL C-5 DEPLOYED!!!');
 });
 
 app.listen(PORT, () => {
