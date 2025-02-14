@@ -37,4 +37,10 @@ app.get('/', (req, res) => {
   res.send('PPL C-5 DEPLOYED!!!');
 });
 
-export default app;
+const PORT = 8000;
+
+const server = app.listen(PORT, () => {
+  console.log(`Server listening on port: ${PORT}`);
+});
+
+export default server;
