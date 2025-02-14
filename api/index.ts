@@ -3,8 +3,6 @@ import express from "express";
 
 require("dotenv").config();
 
-const PORT = 8000;
-
 const app = express();
 
 const whitelist: string[] = [];
@@ -37,10 +35,6 @@ app.use(cors(corsOptions));
 
 app.get('/', (req, res) => {
   res.send('PPL C-5 DEPLOYED!!!');
-});
-
-app.listen(PORT, () => {
-    console.log(`Server listening on port: ${PORT}`);
 });
 
 export default app;
