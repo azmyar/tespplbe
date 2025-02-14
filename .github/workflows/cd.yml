@@ -37,12 +37,8 @@ jobs:
           STACK_ID=$(curl -s -X GET "${{ secrets.PORTAINER_URL }}/stacks?endpointId=$ENDPOINT_ID" \
             -H "Authorization: Bearer $TOKEN" | jq -r '.[] | select(.Name=="${{ secrets.STACK_NAME }}") | .Id')
 
-          # Stop the stack
-          curl -s -X POST "${{ secrets.PORTAINER_URL }}/stacks/$STACK_ID/stop?endpointId=$ENDPOINT_ID" \
-            -H "Authorization: Bearer $TOKEN"
-
-          sleep 5  # Wait a few seconds to ensure shutdown
-
-          # Start the stack
-          curl -s -X POST "${{ secrets.PORTAINER_URL }}/stacks/$STACK_ID/start?endpointId=$ENDPOINT_ID" \
-            -H "Authorization: Bearer $TOKEN"
+          # Redeploy the stack (this pulls the latest image)
+          curl -s -X POST "${{ secrets.PORTAINER_URL }}/stacks/$STACK_ID/update?endpointId=1" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" \
+            --data '{"prune": true}'
