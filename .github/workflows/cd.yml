@@ -3,7 +3,7 @@ name: CD Pipeline
 on:
   push:
     branches:
-      - main  # Deploy only when changes are pushed to main
+      - main 
 
 jobs:
   deploy:
@@ -29,16 +29,20 @@ jobs:
             -H "Content-Type: application/json" \
             --data '{"username": "${{ secrets.PORTAINER_USERNAME }}", "password": "${{ secrets.PORTAINER_PASSWORD }}"}' | jq -r .jwt)
 
-          # Get stack ID
-          STACK_ID=$(curl -s -X GET "${{ secrets.PORTAINER_URL }}/stacks" \
+          # Get the endpoint ID dynamically
+          ENDPOINT_ID=$(curl -s -X GET "${{ secrets.PORTAINER_URL }}/endpoints" \
+            -H "Authorization: Bearer $TOKEN" | jq -r '.[0].Id')
+
+          # Get stack ID dynamically
+          STACK_ID=$(curl -s -X GET "${{ secrets.PORTAINER_URL }}/stacks?endpointId=$ENDPOINT_ID" \
             -H "Authorization: Bearer $TOKEN" | jq -r '.[] | select(.Name=="${{ secrets.STACK_NAME }}") | .Id')
 
           # Stop the stack
-          curl -s -X POST "${{ secrets.PORTAINER_URL }}/stacks/$STACK_ID/stop" \
+          curl -s -X POST "${{ secrets.PORTAINER_URL }}/stacks/$STACK_ID/stop?endpointId=$ENDPOINT_ID" \
             -H "Authorization: Bearer $TOKEN"
 
           sleep 5  # Wait a few seconds to ensure shutdown
 
           # Start the stack
-          curl -s -X POST "${{ secrets.PORTAINER_URL }}/stacks/$STACK_ID/start" \
+          curl -s -X POST "${{ secrets.PORTAINER_URL }}/stacks/$STACK_ID/start?endpointId=$ENDPOINT_ID" \
             -H "Authorization: Bearer $TOKEN"
