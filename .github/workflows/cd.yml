@@ -1,36 +1,46 @@
-name: CD Pipeline
+name: Deploy to Portainer via API
 
 on:
   push:
     branches:
-      - main  # Deploy only when changes are pushed to main
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Log in to Docker Hub
         run: |
           echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
-      - name: Build and push Docker image
+      - name: Build and Push Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/my-app:latest .
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/my-app:latest
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/your-image:latest .
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/your-image:latest
 
-      - name: Deploy to Portainer
+      - name: Authenticate with Portainer
         run: |
-          # Authenticate to Portainer and get the JWT token
-          TOKEN=$(curl -s -X POST "${{ secrets.PORTAINER_URL }}/auth" \
+          TOKEN=$(curl -s -X POST "${{ secrets.PORTAINER_URL }}/api/auth" \
             -H "Content-Type: application/json" \
-            --data '{"username": "${{ secrets.PORTAINER_USERNAME }}", "password": "${{ secrets.PORTAINER_PASSWORD }}"}' | jq -r .jwt)
+            --data '{"username": "${{ secrets.PORTAINER_USERNAME }}", "password": "${{ secrets.PORTAINER_PASSWORD }}"}' \
+            | jq -r '.jwt // empty')
 
-          # Update stack in Portainer
-          curl -s -X POST "${{ secrets.PORTAINER_URL }}/stacks/${{ secrets.STACK_NAME }}/update?endpointId=1" \
-            -H "Authorization: Bearer $TOKEN" \
+          if [ -z "$TOKEN" ]; then
+            echo "Error: Failed to retrieve JWT token."
+            exit 1
+          fi
+
+          echo "PORTAINER_TOKEN=$TOKEN" >> $GITHUB_ENV
+
+      - name: Update Stack in Portainer
+        run: |
+          curl -X POST "${{ secrets.PORTAINER_URL }}/api/stacks/${{ secrets.PORTAINER_STACK_ID }}/update?endpointId=${{ secrets.PORTAINER_ENDPOINT_ID }}" \
+            -H "Authorization: Bearer $PORTAINER_TOKEN" \
             -H "Content-Type: application/json" \
-            --data '{"prune": true}'
+            --data '{
+              "prune": true
+            }'
