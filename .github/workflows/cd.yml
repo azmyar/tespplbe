@@ -29,8 +29,8 @@ jobs:
             -H "Content-Type: application/json" \
             --data '{"username": "${{ secrets.PORTAINER_USERNAME }}", "password": "${{ secrets.PORTAINER_PASSWORD }}"}' | jq -r .jwt)
 
-          # Update stack in Portainer
-          curl -s -X POST "${{ secrets.PORTAINER_URL }}/stacks/${{ secrets.STACK_NAME }}/update?endpointId=1" \
-            -H "Authorization: Bearer $TOKEN" \
-            -H "Content-Type: application/json" \
-            --data '{"prune": true}'
+        #   # Update stack in Portainer
+        #   curl -s -X POST "${{ secrets.PORTAINER_URL }}/stacks/${{ secrets.STACK_NAME }}/update?endpointId=1" \
+        #     -H "Authorization: Bearer $TOKEN" \
+        #     -H "Content-Type: application/json" \
+        #     --data '{"prune": true}'
