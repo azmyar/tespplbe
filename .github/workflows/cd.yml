@@ -38,7 +38,7 @@ jobs:
             -H "Authorization: Bearer $TOKEN" | jq -r '.[] | select(.Name=="${{ secrets.STACK_NAME }}") | .Id')
 
           # Redeploy the stack (this pulls the latest image)
-          curl -s -X POST "${{ secrets.PORTAINER_URL }}/stacks/$STACK_ID/redeploy?endpointId=$ENDPOINT_ID" \
+          curl -s -X POST "${{ secrets.PORTAINER_URL }}/stacks/$STACK_ID/git/redeploy?endpointId=$ENDPOINT_ID" \
             -H "Authorization: Bearer $TOKEN" \
             -H "Content-Type: application/json" \
             --data '{"prune": true}'
