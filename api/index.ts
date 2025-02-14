@@ -3,7 +3,7 @@ import express from "express";
 
 require("dotenv").config();
 
-const PORT: string = process.env.PORT!;
+const PORT = 8000;
 
 const app = express();
 
@@ -37,6 +37,10 @@ app.use(cors(corsOptions));
 
 app.get('/', (req, res) => {
   res.send('PPL C-5');
+});
+
+app.listen(PORT, () => {
+    console.log(`Server listening on port: ${PORT}`);
 });
 
 export default app;
