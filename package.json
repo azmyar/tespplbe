@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest --coverage",
     "start": "ts-node --transpile-only api/index.ts",
-    "dev": "ts-node-dev api/server.ts",
+    "dev": "ts-node-dev api/index.ts",
     "sonar": "sonar-scanner"
   },
   "keywords": [],
