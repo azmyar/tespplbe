@@ -12,10 +12,10 @@ afterAll((done) => {
   server.close(done);
 });
 
-test('GET / should return PPL C-5', async () => {
+test('GET / should return PPL C-5 DEPLOYED!!!', async () => {
   const response = await request(app).get('/');
   expect(response.status).toBe(200);
-  expect(response.text).toBe('PPL C-5');
+  expect(response.text).toBe('PPL C-5 DEPLOYED!!!');
 });
 
 // test('CORS should allow requests from whitelisted origin', async () => {
@@ -39,5 +39,5 @@ test('CORS should allow requests with no origin', async () => {
   process.env.PROD_CLIENT_URL = 'http://example.com';
   const response = await request(app).get('/');
   expect(response.status).toBe(200);
-  expect(response.text).toBe('PPL C-5');
+  expect(response.text).toBe('PPL C-5 DEPLOYED!!!');
 });
